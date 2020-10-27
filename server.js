@@ -1,13 +1,24 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+let db = require("./db/db.json");
 // shows error from front end in the terminal
-const logger = require('morgan');
+// const logger = require('morgan');
+// const { networkInterfaces } = require('os');
+// app.use(logger('dev'));
 
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-app.use(logger('dev'));
+let noteData = [];
+
+// function to read notes
+fs.readFile("db/db.json", "utf8", (err, data) => {
+    noteData = JSON.parse(data);
+    nextId = Math.max(...noteData.map(function (note) {
+        return note.id
+    })) + 1;
+});
 
 // routes for css
 app.use(express.static('public'))
@@ -28,21 +39,45 @@ app.get('/notes', function (req, res) {
 });
 
 app.get('/api/notes', function (req, res) {
-    res.json([{ "title": "Test Title", "text": "Test text" }])
+    res.json(noteData)
 });
-
-// function to read notes
-
 
 // function to save notes
 app.post('/api/notes', function (req, res) {
-    
+    let newNote = req.body;
+    newNote.id = Date.now();
+    noteData.push(newNote);
+
+    newNote = JSON.stringify(noteData);
+    fs.writeFile("db/db.json", newNote, (err) => {
+        console.log(err);
+        res.json(newNote)
+    });
+
 });
 
 // DELETE /api/notes/:id  Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
 // function to delete notes
 app.delete('/api/notes/:id', function (req, res) {
+    let id = req.params.id
+    let trash = [];
+    noteData.forEach(note => {
+        if (note.id == id) {
+            noteData.push
 
+            console.log(note.id)
+            
+        }
+    })
+    console.log(trash)
+
+    
+    newNote = JSON.stringify(noteData);
+    fs.writeFile("db/db.json", newNote, (err) => {
+        console.log(err);
+        res.json({ ok: true })
+    });
+    
 });
 
 
