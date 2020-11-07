@@ -65,8 +65,6 @@ app.delete('/api/notes/:id', function (req, res, next) {
         if (note.id == id) {
             noteData = noteData.filter((note => note.id !== parseInt(req.params.id)));
             console.log(noteData);
-            // trash.push(id);
-            // console.log(trash)
         }
     })
 
@@ -74,7 +72,6 @@ app.delete('/api/notes/:id', function (req, res, next) {
     fs.writeFile("db/db.json", newNote, (err) => {
         res.json({ ok: true })
     });
-
 });
 
 app.listen(PORT, function () {
